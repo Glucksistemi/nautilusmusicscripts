@@ -1,0 +1,17 @@
+#!/bin/bash
+#Decodes ALAC (m4a) to FLAC
+#usage: launch script at folder with alac files. It will decode them all. Be careful, it will delete all the alac files
+ls -1 | grep .m4a$ | while read m4afile
+do
+	filename="${m4afile%.m4a}"
+	alac-decoder -f "${filename}.wav" "$m4afile" #Осторожно, индуизм!
+	flac "${filename}.wav"
+	rm "${filename}.wav"
+	metaflac --set-tag=TITLE="`mp4info "${m4afile}" | grep "^ Name: " | sed 's/^ Name: //g'`" "${filename}.flac"
+	metaflac --set-tag=ALBUM="`mp4info "${m4afile}" | grep "^ Album: " | sed 's/^ Album: //g'`" "${filename}.flac"
+	metaflac --set-tag=ARTIST="`mp4info "${m4afile}" | grep "^ Artist: " | sed 's/^ Artist: //g'`" "${filename}.flac"
+	metaflac --set-tag=DATE="`mp4info "${m4afile}" | grep "^ Release Date: " | sed 's/^ Release Date: //g'`" "${filename}.flac"
+	metaflac --set-tag=TRACKNUMBER="`mp4info "${m4afile}" | grep "^ Track: " | sed 's/^ Track: //g' | cut -d " " -f1`" "${filename}.flac"
+	metaflac --set-tag=GENRE="`mp4info "${m4afile}" | grep "^ Genre: " | sed 's/^ Genre: //g'`" "${filename}.flac"
+	rm "$m4afile"
+done
