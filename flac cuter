@@ -1,0 +1,14 @@
+#!/bin/sh
+#flac cutting G-script
+#How to use:
+#just select .flac and .cue files you need and run this script via Nautilus
+#need the 
+#v 0.1
+#By Gluck_S http://glucksistemi.net glucksistemi@gmail.com
+#Licensed under beerware license (google it yourself)
+#==========================================================================
+flacfile=`echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" | grep .flac`
+cuefile=`echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" | grep .cue`
+shnsplit -o flac -f "$cuefile" -t %n-%t "$flacfile"
+cuetag "$cuefile" *.flac
+notify-send "cuted successfully..."
