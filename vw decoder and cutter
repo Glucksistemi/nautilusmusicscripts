@@ -1,0 +1,12 @@
+#!/bin/bash
+#this G-script decodes wavpack image to flac and cut it to the tracks
+wvpfile=`echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" | grep .wv$`
+cuefile=`echo "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" | grep .cue$`
+echo "${wvpfile}" > log.txt
+wvunpack "${wvpfile}" -o "${wvpfile}.tmp.wav" &>> log.txt
+flac "${wvpfile}.tmp.wav" &>> log.txt
+rm "${wvpfile}.tmp.wav"
+shnsplit -o flac -f "$cuefile" -t %n-%t "${wvpfile}.tmp.flac" &>> log.txt
+cuetag "$cuefile" *.flac &>> log.txt
+notify-send "cuted successfully"
+rm "${wvpfile}.tmp.flac"
